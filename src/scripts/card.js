@@ -5,7 +5,12 @@ const cardTemplate = document.querySelector("#card-template").content;
 const imagePopup = document.querySelector(".popup_type_image");
 export const cardList = document.querySelector(".places__list");
 
-export function createCard({ name, link, altText }, deleteCallback, imageClickCallback, likeCallback) {
+export function createCard(
+  { name, link, altText },
+  deleteCallback,
+  imageClickCallback,
+  likeCallback
+) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
@@ -14,7 +19,13 @@ export function createCard({ name, link, altText }, deleteCallback, imageClickCa
   image.alt = altText ?? `Очень информативный аттрибут alt (не знаю как лучше)`;
   cardElement.querySelector(".card__title").textContent = name;
 
-  setDefaultEventHandlers(image, cardElement, deleteCallback, imageClickCallback, likeCallback)
+  setDefaultEventHandlers(
+    image,
+    cardElement,
+    deleteCallback,
+    imageClickCallback,
+    likeCallback
+  );
 
   return cardElement;
 }
@@ -39,6 +50,11 @@ export function deleteCard(element) {
 }
 
 export function renderCard(cardData) {
-  const cardElement = createCard(cardData, deleteCard, handleImageClick, handleLike);
+  const cardElement = createCard(
+    cardData,
+    deleteCard,
+    handleImageClick,
+    handleLike
+  );
   cardList.append(cardElement);
 }

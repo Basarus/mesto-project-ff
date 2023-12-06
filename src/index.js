@@ -14,7 +14,7 @@ import {
   editForm,
   addCardForm,
   closePopupOnEsc,
-  closePopupOnOverlayClick
+  closePopupOnOverlayClick,
 } from "./scripts/modal";
 
 const editButton = document.querySelector(".profile__edit-button");
@@ -50,7 +50,13 @@ export function toggleEscEventHandler(action) {
   }
 }
 
-export function setDefaultEventHandlers(image, cardElement, deleteCallback, imageClickCallback, likeCallback) {
+export function setDefaultEventHandlers(
+  image,
+  cardElement,
+  deleteCallback,
+  imageClickCallback,
+  likeCallback
+) {
   const deleteCardButton = cardElement.querySelector(".card__delete-button");
 
   deleteCardButton.addEventListener("click", () => {
@@ -69,7 +75,7 @@ addCardForm.addEventListener("submit", addCardFormHandleSubmit);
 initialCards.forEach(renderCard);
 
 /**
- * Поздравляю с Новым годом! 
+ * Поздравляю с Новым годом!
  * Я конечно не мастер поздравлений, но считаю что могу дать немного положительных эмоций
  * Желаю что бы твой код с каждым днем становился все лучше и лучше, а багов появлялось все меньше и меньше
  * Здоровья всем кто дорог, богатства материального и духовного, исполнения всех метч
