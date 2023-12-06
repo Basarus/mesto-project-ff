@@ -21,17 +21,13 @@ export function createCard({ name, link, altText }, deleteCallback, imageClickCa
   const likeButton = cardElement.querySelector(".card__like-button");
   likeButton.addEventListener("click", likeCallback);
 
-  const cardImage = cardElement.querySelector(".card__image");
-  cardImage.addEventListener("click", imageClickCallback);
+  image.addEventListener("click", imageClickCallback);
 
   return cardElement;
 }
 
 export function handleLike(event) {
-  const likeButton = event.target;
-  if (!likeButton.classList.contains("card__like-button_is-active"))
-    likeButton.classList.add("card__like-button_is-active");
-  else likeButton.classList.remove("card__like-button_is-active");
+  event.target.classList.toggle("card__like-button_is-active");
 }
 
 export function handleImageClick(event) {
