@@ -12,7 +12,9 @@ import {
   openPopup,
   addCardFormHandleSubmit,
   editForm,
-  addCardForm
+  addCardForm,
+  closePopupOnEsc,
+  closePopupOnOverlayClick
 } from "./scripts/modal";
 
 const editButton = document.querySelector(".profile__edit-button");
@@ -37,6 +39,29 @@ closeButtons.forEach((button) => {
     closePopup(popup);
   });
 });
+
+export function toggleEscEventHandler(action) {
+  if (action === "add") {
+    document.addEventListener("keydown", closePopupOnEsc);
+    document.addEventListener("mousedown", closePopupOnOverlayClick);
+  } else if (action === "remove") {
+    document.removeEventListener("keydown", closePopupOnEsc);
+    document.removeEventListener("mousedown", closePopupOnOverlayClick);
+  }
+}
+
+export function setDefaultEventHandlers(image, cardElement, deleteCallback, imageClickCallback, likeCallback) {
+  const deleteCardButton = cardElement.querySelector(".card__delete-button");
+
+  deleteCardButton.addEventListener("click", () => {
+    deleteCallback(cardElement);
+  });
+
+  const likeButton = cardElement.querySelector(".card__like-button");
+  likeButton.addEventListener("click", likeCallback);
+
+  image.addEventListener("click", imageClickCallback);
+}
 
 editForm.addEventListener("submit", editFormHandleSubmit);
 addCardForm.addEventListener("submit", addCardFormHandleSubmit);

@@ -1,4 +1,4 @@
-import { addPopup, editPopup } from "..";
+import { addPopup, editPopup, toggleEscEventHandler } from "..";
 import {
   deleteCard,
   createCard,
@@ -20,18 +20,8 @@ export function closePopupOnOverlayClick(event) {
     closePopup(event.target, "remove");
 }
 
-function closePopupOnEsc(event) {
+export function closePopupOnEsc(event) {
   if (event.key === "Escape") closePopup(event.target, "remove");
-}
-
-function toggleEscEventHandler(action) {
-  if (action === "add") {
-    document.addEventListener("keydown", closePopupOnEsc);
-    document.addEventListener("mousedown", closePopupOnOverlayClick);
-  } else if (action === "remove") {
-    document.removeEventListener("keydown", closePopupOnEsc);
-    document.removeEventListener("mousedown", closePopupOnOverlayClick);
-  }
 }
 
 export function openPopup(popup, type) {

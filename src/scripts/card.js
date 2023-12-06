@@ -1,3 +1,4 @@
+import { setDefaultEventHandlers } from "..";
 import { openPopup } from "./modal";
 
 const cardTemplate = document.querySelector("#card-template").content;
@@ -12,16 +13,8 @@ export function createCard({ name, link, altText }, deleteCallback, imageClickCa
   image.src = link;
   image.alt = altText ?? `Очень информативный аттрибут alt (не знаю как лучше)`;
   cardElement.querySelector(".card__title").textContent = name;
-  const deleteCardButton = cardElement.querySelector(".card__delete-button");
 
-  deleteCardButton.addEventListener("click", () => {
-    deleteCallback(cardElement);
-  });
-
-  const likeButton = cardElement.querySelector(".card__like-button");
-  likeButton.addEventListener("click", likeCallback);
-
-  image.addEventListener("click", imageClickCallback);
+  setDefaultEventHandlers(image, cardElement, deleteCallback, imageClickCallback, likeCallback)
 
   return cardElement;
 }
