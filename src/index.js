@@ -30,9 +30,9 @@ editButton.addEventListener("click", () => {
   openPopup(editPopup);
 });
 
-addButton.addEventListener("click", () => openPopup(addPopup, "addCard"));
+addButton.addEventListener("click", () => openPopup(addPopup));
 imageElement.addEventListener("click", () =>
-  openPopup(imagePopup, "imagePopup")
+  openPopup(imagePopup)
 );
 
 closeButtons.forEach((button) => {
