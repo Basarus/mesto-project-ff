@@ -67,13 +67,6 @@ export function setDefaultEventHandlers({
   imageClickCallback,
   likeCallback,
 }) {
-  console.log(
-    image,
-    cardElement,
-    deleteCallback,
-    imageClickCallback,
-    likeCallback,
-  )
   const deleteCardButton = cardElement.querySelector(".card__delete-button");
 
   deleteCardButton.addEventListener("click", () => {
