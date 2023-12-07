@@ -1,36 +1,32 @@
-import { addPopup, editPopup, toggleEscEventHandler } from "..";
 import {
   deleteCard,
   createCard,
   handleLike,
   handleImageClick,
-  cardList
+  cardList,
 } from "./card";
 
 export const editForm = document.forms["edit-profile"];
 export const addCardForm = document.forms["new-place"];
 
-let profileTitle = document.querySelector(".profile__title");
-let profileDescription = document.querySelector(
-  ".profile__description"
-);
+export const editPopup = document.querySelector(".popup_type_edit");
+export const addPopup = document.querySelector(".popup_type_new-card");
+
+export const profileTitle = document.querySelector(".profile__title");
+export const profileDescription = document.querySelector(".profile__description");
 
 export function closePopupOnOverlayClick(event) {
   if (event.target.classList.contains("popup_is-opened"))
-    closePopup(event.target, "remove");
+    closePopup(event.target);
 }
 
 export function closePopupOnEsc(event) {
-  if (event.key === "Escape") closePopup(event.target, "remove");
+  if (event.key === "Escape") closePopup(event.target);
 }
 
 export function openPopup(popup, type) {
   popup.classList.add("popup_is-opened");
   popup.classList.remove("popup_is-animated");
-  if (type === "editProfile") {
-    editForm.name.value = profileTitle.textContent;
-    editForm.description.value = profileDescription.textContent;
-  }
   toggleEscEventHandler("add");
 }
 
@@ -40,28 +36,38 @@ export function closePopup(popup) {
   toggleEscEventHandler("remove");
 }
 
-export function editFormHandleSubmit(event) {
+export function handleProfileFormSubmit (event) {
   event.preventDefault();
   profileTitle.textContent = event.target.name.value;
   profileDescription.textContent = event.target.description.value;
   closePopup(editPopup);
 }
 
-export function addCardFormHandleSubmit(event) {
+export function handleCardFormSubmit (event) {
   event.preventDefault();
 
   const cardName = event.target["place-name"].value;
   const imageUrl = event.target["link"].value;
 
-  const newCard = createCard(
-    { name: cardName, link: imageUrl, altText: cardName },
-    deleteCard,
-    handleImageClick,
-    handleLike
-  );
+  const newCard = createCard({
+    cardData: { name: cardName, link: imageUrl, altText: cardName },
+    deleteCallback: deleteCard,
+    imageClickCallback: handleImageClick,
+    likeCallback: handleLike,
+  });
 
   cardList.prepend(newCard);
 
   addCardForm.reset();
   closePopup(addPopup);
+}
+
+function toggleEscEventHandler(action) {
+  if (action === "add") {
+    document.addEventListener("keydown", closePopupOnEsc);
+    document.addEventListener("mousedown", closePopupOnOverlayClick);
+  } else if (action === "remove") {
+    document.removeEventListener("keydown", closePopupOnEsc);
+    document.removeEventListener("mousedown", closePopupOnOverlayClick);
+  }
 }

@@ -5,29 +5,31 @@ import cardTwoImage from "./images/card_2.jpg";
 import cardThreeImage from "./images/card_3.jpg";
 import { initialCards } from "./scripts/data/cards";
 import "./scripts/modal";
-import { renderCard } from "./scripts/card";
+import { renderCard,imagePopup } from "./scripts/card";
 import {
   closePopup,
-  editFormHandleSubmit,
+  handleProfileFormSubmit ,
   openPopup,
-  addCardFormHandleSubmit,
+  handleCardFormSubmit ,
   editForm,
   addCardForm,
-  closePopupOnEsc,
-  closePopupOnOverlayClick,
+  addPopup,
+  editPopup,
+  profileTitle,
+  profileDescription
 } from "./scripts/modal";
 
 const editButton = document.querySelector(".profile__edit-button");
 const addButton = document.querySelector(".profile__add-button");
 const imageElement = document.querySelector(".profile__image");
-
-export const editPopup = document.querySelector(".popup_type_edit");
-export const addPopup = document.querySelector(".popup_type_new-card");
-export const imagePopup = document.querySelector(".popup_type_image");
-
 const closeButtons = document.querySelectorAll(".popup__close");
 
-editButton.addEventListener("click", () => openPopup(editPopup, "editProfile"));
+editButton.addEventListener("click", () => {
+  editForm.name.value = profileTitle.textContent;
+  editForm.description.value = profileDescription.textContent;
+  openPopup(editPopup);
+});
+
 addButton.addEventListener("click", () => openPopup(addPopup, "addCard"));
 imageElement.addEventListener("click", () =>
   openPopup(imagePopup, "imagePopup")
@@ -40,37 +42,8 @@ closeButtons.forEach((button) => {
   });
 });
 
-export function toggleEscEventHandler(action) {
-  if (action === "add") {
-    document.addEventListener("keydown", closePopupOnEsc);
-    document.addEventListener("mousedown", closePopupOnOverlayClick);
-  } else if (action === "remove") {
-    document.removeEventListener("keydown", closePopupOnEsc);
-    document.removeEventListener("mousedown", closePopupOnOverlayClick);
-  }
-}
-
-export function setDefaultEventHandlers(
-  image,
-  cardElement,
-  deleteCallback,
-  imageClickCallback,
-  likeCallback
-) {
-  const deleteCardButton = cardElement.querySelector(".card__delete-button");
-
-  deleteCardButton.addEventListener("click", () => {
-    deleteCallback(cardElement);
-  });
-
-  const likeButton = cardElement.querySelector(".card__like-button");
-  likeButton.addEventListener("click", likeCallback);
-
-  image.addEventListener("click", imageClickCallback);
-}
-
-editForm.addEventListener("submit", editFormHandleSubmit);
-addCardForm.addEventListener("submit", addCardFormHandleSubmit);
+editForm.addEventListener("submit", handleProfileFormSubmit );
+addCardForm.addEventListener("submit", handleCardFormSubmit );
 
 initialCards.forEach(renderCard);
 
