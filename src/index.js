@@ -1,6 +1,6 @@
 import "./index.css";
 import "./scripts/modal";
-import { renderCard, imagePopup } from "./scripts/card";
+import { renderCard } from "./scripts/card";
 import {
   closePopup,
   handleProfileFormSubmit,
@@ -58,9 +58,18 @@ Promise.all([
   if (cards) cards.forEach(renderCard)
 });
 
-enableValidation();
-clearValidation(editForm);
-clearValidation(addCardForm);
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: ".popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
+
+enableValidation(validationConfig);
+clearValidation(editForm, validationConfig);
+clearValidation(addCardForm, validationConfig);
 
 /**
  * Поздравляю с Новым годом!

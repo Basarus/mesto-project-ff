@@ -37,15 +37,8 @@ export function closePopupOnEsc(event) {
 export function openPopup(popup) {
   popup.classList.add("popup_is-opened");
   popup.classList.remove("popup_is-animated");
-
-  const inputs = popup.querySelectorAll(validationConfig.inputSelector);
-  const button = popup.querySelector(validationConfig.submitButtonSelector);
-  
-  if (inputs && button) {
-    button.textContent = "Сохранить";
-    validateInputs(popup, inputs, button);
-  }
-
+  const button = popup.querySelector('.button')
+  if (button) button.textContent = "Сохранить"
   toggleEscEventHandler("add");
 }
 
