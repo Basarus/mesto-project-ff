@@ -1,4 +1,5 @@
 import { openPopup } from "./modal";
+import mesto, { currentUserId } from "./module/api";
 
 const cardTemplate = document.querySelector("#card-template").content;
 export const imagePopup = document.querySelector(".popup_type_image");
@@ -19,8 +20,15 @@ export function createCard({
   image.src = cardData.link;
   image.alt =
     cardData.altText ?? `Очень информативный аттрибут alt (не знаю как лучше)`;
+  cardElement.id = cardData._id;
   cardElement.querySelector(".card__title").textContent = cardData.name;
-
+  cardElement.querySelector(".card__image-likes-count").textContent =
+    cardData.likes.length ?? 0;
+  if (cardData.likes.some((u) => u._id === currentUserId))
+    cardElement
+      .querySelector(".card__like-button")
+      .classList.toggle("card__like-button_is-active");
+  if (cardData.owner._id !== currentUserId) cardElement.querySelector(".card__delete-button").style.display = "none"; 
   setDefaultEventHandlers({
     image,
     cardElement,
@@ -32,8 +40,22 @@ export function createCard({
   return cardElement;
 }
 
+export function updateCard(cardData) {
+  const cardElement = cardList.querySelector(`[id="${cardData._id}"`);
+  cardElement.querySelector(".card__image-likes-count").textContent =
+    cardData.likes.length ?? 0;
+}
+
 export function handleLike(event) {
-  event.target.classList.toggle("card__like-button_is-active");
+  mesto
+    .setLikeCard(
+      event.target.closest(".places__item").id,
+      !event.target.classList.contains("card__like-button_is-active")
+    )
+    .then((res) => {
+      event.target.classList.toggle("card__like-button_is-active");
+      updateCard(res);
+    });
 }
 
 export function handleImageClick(event) {
@@ -47,7 +69,9 @@ export function handleImageClick(event) {
 }
 
 export function deleteCard(element) {
-  element.remove();
+  mesto.deleteCard(element.id).then((res) => {
+    element.remove();
+  });
 }
 
 export function renderCard(cardData) {

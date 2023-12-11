@@ -1,27 +1,28 @@
 import "./index.css";
-import avatarImage from "./images/avatar.jpg";
-import cardOneImage from "./images/card_1.jpg";
-import cardTwoImage from "./images/card_2.jpg";
-import cardThreeImage from "./images/card_3.jpg";
-import { initialCards } from "./scripts/data/cards";
 import "./scripts/modal";
-import { renderCard,imagePopup } from "./scripts/card";
+import { renderCard, imagePopup } from "./scripts/card";
 import {
   closePopup,
-  handleProfileFormSubmit ,
+  handleProfileFormSubmit,
   openPopup,
-  handleCardFormSubmit ,
+  handleCardFormSubmit,
   editForm,
   addCardForm,
   addPopup,
   editPopup,
   profileTitle,
-  profileDescription
+  profileDescription,
+  profileImage,
+  updateAvatarForm,
+  updateAvatarPopup,
+  handleAvatarFormSubmit
 } from "./scripts/modal";
+
+import mesto from "./scripts/module/api";
+import { clearValidation, enableValidation } from "./scripts/validation";
 
 const editButton = document.querySelector(".profile__edit-button");
 const addButton = document.querySelector(".profile__add-button");
-const imageElement = document.querySelector(".profile__image");
 const closeButtons = document.querySelectorAll(".popup__close");
 
 editButton.addEventListener("click", () => {
@@ -31,9 +32,7 @@ editButton.addEventListener("click", () => {
 });
 
 addButton.addEventListener("click", () => openPopup(addPopup));
-imageElement.addEventListener("click", () =>
-  openPopup(imagePopup)
-);
+profileImage.addEventListener("click", () => openPopup(updateAvatarPopup));
 
 closeButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -42,10 +41,26 @@ closeButtons.forEach((button) => {
   });
 });
 
-editForm.addEventListener("submit", handleProfileFormSubmit );
-addCardForm.addEventListener("submit", handleCardFormSubmit );
+editForm.addEventListener("submit", handleProfileFormSubmit);
+addCardForm.addEventListener("submit", handleCardFormSubmit);
+updateAvatarForm.addEventListener("submit", handleAvatarFormSubmit);
 
-initialCards.forEach(renderCard);
+Promise.all([
+  mesto.getUser(),
+  mesto.getAllCards(),
+]).then(values => {
+  const [user, cards] = values;
+  if (user){
+    profileTitle.textContent = user.name;
+    profileDescription.textContent = user.about;
+    profileImage.style["background-image"] = "url('" + user.avatar + "')";
+  }
+  if (cards) cards.forEach(renderCard)
+});
+
+enableValidation();
+clearValidation(editForm);
+clearValidation(addCardForm);
 
 /**
  * Поздравляю с Новым годом!

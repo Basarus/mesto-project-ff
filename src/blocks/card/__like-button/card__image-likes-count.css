@@ -1,0 +1,8 @@
+.card__image-likes-count {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    color: black;
+  }
+  

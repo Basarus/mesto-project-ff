@@ -5,17 +5,24 @@ import {
   handleImageClick,
   cardList,
 } from "./card";
+import mesto from "./module/api";
+import { validateInputs, validationConfig } from "./validation";
 
 export const editForm = document.forms["edit-profile"];
 export const addCardForm = document.forms["new-place"];
+export const updateAvatarForm = document.forms["update-avatar"];
 
 export const editPopup = document.querySelector(".popup_type_edit");
 export const addPopup = document.querySelector(".popup_type_new-card");
+export const updateAvatarPopup = document.querySelector(
+  ".popup_type_update-avatar"
+);
 
 export const profileTitle = document.querySelector(".profile__title");
 export const profileDescription = document.querySelector(
   ".profile__description"
 );
+export const profileImage = document.querySelector(".profile__image");
 
 export function closePopupOnOverlayClick(event) {
   if (event.target.classList.contains("popup_is-opened"))
@@ -23,54 +30,81 @@ export function closePopupOnOverlayClick(event) {
 }
 
 export function closePopupOnEsc(event) {
-  if (event.key === "Escape") 
+  if (event.key === "Escape")
     closePopup(document.querySelector(".popup_is-opened"));
 }
 
 export function openPopup(popup) {
   popup.classList.add("popup_is-opened");
   popup.classList.remove("popup_is-animated");
+
+  const inputs = popup.querySelectorAll(validationConfig.inputSelector);
+  const button = popup.querySelector(validationConfig.submitButtonSelector);
+  
+  if (inputs && button) {
+    button.textContent = "Сохранить";
+    validateInputs(popup, inputs, button);
+  }
+
   toggleEscEventHandler("add");
 }
 
-export function closePopup(popup) {
+export async function closePopup(popup) {
   popup.classList.remove("popup_is-opened");
   popup.classList.add("popup_is-animated");
   toggleEscEventHandler("remove");
 }
 
+export function handleAvatarFormSubmit(event) {
+  event.preventDefault();
+  event.target.querySelector(".popup__button").textContent = "Сохранение...";
+  const imageUrl = event.target["link"].value;
+  mesto.updateUserAvatar(imageUrl).then((res) => {
+    if (!res) return;
+    profileImage.style["background-image"] = "url('" + res.avatar + "')";
+  });
+  closePopup(updateAvatarPopup);
+}
+
 export function handleProfileFormSubmit(event) {
   event.preventDefault();
-  profileTitle.textContent = event.target.name.value;
-  profileDescription.textContent = event.target.description.value;
+  event.target.querySelector(".popup__button").textContent = "Сохранение...";
+  mesto
+    .updateUser(event.target.name.value, event.target.description.value)
+    .then((res) => {
+      if (!res) return;
+      profileTitle.textContent = res.name;
+      profileDescription.textContent = res.about;
+    });
   closePopup(editPopup);
 }
 
 export function handleCardFormSubmit(event) {
   event.preventDefault();
-
+  event.target.querySelector(".popup__button").textContent = "Сохранение...";
   const cardName = event.target["place-name"].value;
   const imageUrl = event.target["link"].value;
 
-  const newCard = createCard({
-    cardData: { name: cardName, link: imageUrl, altText: cardName },
-    deleteCallback: deleteCard,
-    imageClickCallback: handleImageClick,
-    likeCallback: handleLike,
+  mesto.addNewCard(cardName, imageUrl).then((res) => {
+    if (!res) return;
+    const newCard = createCard({
+      cardData: res,
+      deleteCallback: deleteCard,
+      imageClickCallback: handleImageClick,
+      likeCallback: handleLike,
+    });
+    cardList.prepend(newCard);
+    addCardForm.reset();
   });
-
-  cardList.prepend(newCard);
-
-  addCardForm.reset();
   closePopup(addPopup);
 }
 
 function toggleEscEventHandler(action) {
-  if (action === "add") { 
-    document.addEventListener("keydown", closePopupOnEsc); 
-    document.addEventListener("mousedown", closePopupOnOverlayClick); 
-  } else if (action === "remove") { 
-    document.removeEventListener("keydown", closePopupOnEsc); 
-    document.removeEventListener("mousedown", closePopupOnOverlayClick); 
+  if (action === "add") {
+    document.addEventListener("keydown", closePopupOnEsc);
+    document.addEventListener("mousedown", closePopupOnOverlayClick);
+  } else if (action === "remove") {
+    document.removeEventListener("keydown", closePopupOnEsc);
+    document.removeEventListener("mousedown", closePopupOnOverlayClick);
   }
 }
