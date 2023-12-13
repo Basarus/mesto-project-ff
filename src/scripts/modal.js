@@ -2,11 +2,9 @@ import {
   deleteCard,
   createCard,
   handleLike,
-  handleImageClick,
   cardList,
 } from "./card";
 import mesto from "./module/api";
-import { validateInputs, validationConfig } from "./validation";
 
 export const editForm = document.forms["edit-profile"];
 export const addCardForm = document.forms["new-place"];
@@ -55,6 +53,8 @@ export function handleAvatarFormSubmit(event) {
   mesto.updateUserAvatar(imageUrl).then((res) => {
     if (!res) return;
     profileImage.style["background-image"] = "url('" + res.avatar + "')";
+  }).catch((err) => {
+    console.log(err)
   });
   closePopup(updateAvatarPopup);
 }
@@ -68,11 +68,13 @@ export function handleProfileFormSubmit(event) {
       if (!res) return;
       profileTitle.textContent = res.name;
       profileDescription.textContent = res.about;
+    }).catch((err) => {
+      console.log(err)
     });
   closePopup(editPopup);
 }
 
-export function handleCardFormSubmit(event) {
+export function handleCardFormSubmit(event, handleImageClick) {
   event.preventDefault();
   event.target.querySelector(".popup__button").textContent = "Сохранение...";
   const cardName = event.target["place-name"].value;
@@ -88,6 +90,8 @@ export function handleCardFormSubmit(event) {
     });
     cardList.prepend(newCard);
     addCardForm.reset();
+  }).catch((err) => {
+    console.log(err)
   });
   closePopup(addPopup);
 }

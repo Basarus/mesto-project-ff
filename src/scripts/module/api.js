@@ -18,9 +18,6 @@ async function request(address, type = "POST", body = null) {
       if (res.ok) return res.json();
       else throw `Ошибка ${res.status}`;
     })
-    .catch((err) => {
-      console.log(err);
-    });
 
   return result ?? null;
 }

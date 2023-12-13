@@ -1,6 +1,6 @@
 import "./index.css";
 import "./scripts/modal";
-import { renderCard } from "./scripts/card";
+import { renderCard, imagePopup } from "./scripts/card";
 import {
   closePopup,
   handleProfileFormSubmit,
@@ -15,11 +15,14 @@ import {
   profileImage,
   updateAvatarForm,
   updateAvatarPopup,
-  handleAvatarFormSubmit
+  handleAvatarFormSubmit,
 } from "./scripts/modal";
 
 import mesto from "./scripts/module/api";
 import { clearValidation, enableValidation } from "./scripts/validation";
+
+const imageElement = imagePopup.querySelector(".popup__image");
+const captionElement = imagePopup.querySelector(".popup__caption");
 
 const editButton = document.querySelector(".profile__edit-button");
 const addButton = document.querySelector(".profile__add-button");
@@ -28,11 +31,18 @@ const closeButtons = document.querySelectorAll(".popup__close");
 editButton.addEventListener("click", () => {
   editForm.name.value = profileTitle.textContent;
   editForm.description.value = profileDescription.textContent;
+  clearValidation(editForm, validationConfig);
   openPopup(editPopup);
 });
 
-addButton.addEventListener("click", () => openPopup(addPopup));
-profileImage.addEventListener("click", () => openPopup(updateAvatarPopup));
+addButton.addEventListener("click", () => {
+  clearValidation(addCardForm, validationConfig);
+  openPopup(addPopup)
+});
+profileImage.addEventListener("click", () => {
+  clearValidation(updateAvatarPopup, validationConfig);
+  openPopup(updateAvatarPopup)
+});
 
 closeButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -41,21 +51,37 @@ closeButtons.forEach((button) => {
   });
 });
 
+function handleImageClick(event) {
+  const imagePath = event.target.src;
+  imageElement.src = imagePath;
+  imageElement.alt =
+    event.target.alt ?? `Очень информативный аттрибут alt (не знаю как лучше)`;
+  captionElement.textContent = event.target.alt;
+
+  openPopup(imagePopup);
+}
+
 editForm.addEventListener("submit", handleProfileFormSubmit);
-addCardForm.addEventListener("submit", handleCardFormSubmit);
+addCardForm.addEventListener("submit", (event) => {
+  handleCardFormSubmit(event, handleImageClick)
+});
 updateAvatarForm.addEventListener("submit", handleAvatarFormSubmit);
 
 Promise.all([
   mesto.getUser(),
   mesto.getAllCards(),
-]).then(values => {
-  const [user, cards] = values;
+]).then(([user, cards]) => {
   if (user){
     profileTitle.textContent = user.name;
     profileDescription.textContent = user.about;
     profileImage.style["background-image"] = "url('" + user.avatar + "')";
   }
-  if (cards) cards.forEach(renderCard)
+
+  if (cards) cards.forEach((card) => {
+    renderCard(card, handleImageClick)
+  })
+}).catch((error) => {
+  console.log(error)
 });
 
 const validationConfig = {
@@ -68,8 +94,6 @@ const validationConfig = {
 };
 
 enableValidation(validationConfig);
-clearValidation(editForm, validationConfig);
-clearValidation(addCardForm, validationConfig);
 
 /**
  * Поздравляю с Новым годом!

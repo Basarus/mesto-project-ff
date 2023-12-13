@@ -1,10 +1,7 @@
-import { openPopup } from "./modal";
 import mesto, { currentUserId } from "./module/api";
 
 const cardTemplate = document.querySelector("#card-template").content;
 export const imagePopup = document.querySelector(".popup_type_image");
-const imageElement = imagePopup.querySelector(".popup__image");
-const captionElement = imagePopup.querySelector(".popup__caption");
 export const cardList = document.querySelector(".places__list");
 
 export function createCard({
@@ -23,12 +20,16 @@ export function createCard({
   cardElement.id = cardData._id;
   cardElement.querySelector(".card__title").textContent = cardData.name;
   cardElement.querySelector(".card__image-likes-count").textContent =
-    cardData.likes.length ?? 0;
+    cardData.likes.length;
   if (cardData.likes.some((u) => u._id === currentUserId))
     cardElement
       .querySelector(".card__like-button")
       .classList.toggle("card__like-button_is-active");
-  if (cardData.owner._id !== currentUserId) cardElement.querySelector(".card__delete-button").style.display = "none"; 
+  if (cardData.owner._id !== currentUserId) {
+    cardElement.querySelector(".card__delete-button").style.display = "none";
+    deleteCallback = null;
+  }
+
   setDefaultEventHandlers({
     image,
     cardElement,
@@ -43,7 +44,7 @@ export function createCard({
 export function updateCard(cardData) {
   const cardElement = cardList.querySelector(`[id="${cardData._id}"`);
   cardElement.querySelector(".card__image-likes-count").textContent =
-    cardData.likes.length ?? 0;
+    cardData.likes.length;
 }
 
 export function handleLike(event) {
@@ -55,26 +56,24 @@ export function handleLike(event) {
     .then((res) => {
       event.target.classList.toggle("card__like-button_is-active");
       updateCard(res);
+    })
+    .catch((err) => {
+      console.error(err);
     });
 }
 
-export function handleImageClick(event) {
-  const imagePath = event.target.src;
-  imageElement.src = imagePath;
-  imageElement.alt =
-    event.target.alt ?? `Очень информативный аттрибут alt (не знаю как лучше)`;
-  captionElement.textContent = event.target.alt;
-
-  openPopup(imagePopup);
-}
-
 export function deleteCard(element) {
-  mesto.deleteCard(element.id).then((res) => {
-    element.remove();
-  });
+  mesto
+    .deleteCard(element.id)
+    .then((res) => {
+      element.remove();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
-export function renderCard(cardData) {
+export function renderCard(cardData, handleImageClick) {
   const cardElement = createCard({
     cardData,
     deleteCallback: deleteCard,
@@ -92,10 +91,10 @@ export function setDefaultEventHandlers({
   likeCallback,
 }) {
   const deleteCardButton = cardElement.querySelector(".card__delete-button");
-
-  deleteCardButton.addEventListener("click", () => {
-    deleteCallback(cardElement);
-  });
+  if (deleteCallback)
+    deleteCardButton.addEventListener("click", () => {
+      deleteCallback(cardElement);
+    });
 
   const likeButton = cardElement.querySelector(".card__like-button");
   likeButton.addEventListener("click", likeCallback);
