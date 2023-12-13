@@ -39,31 +39,35 @@ function checkInputValidity(form, input, validationConfig) {
   } else {
     input.setCustomValidity("");
   }
-  const errorText = input.validationMessage;
-  const errorForm = form.querySelector(
-    `${validationConfig.inputErrorClass}-${input.name}`
-  );
 
-  if (!input.validity.valid)
-    showCustomError(errorForm, errorText, validationConfig);
-  else clearCustomError(errorForm, validationConfig);
+  if (!input.validity.valid) showCustomError(form, input, validationConfig);
+  else clearCustomError(form, input, validationConfig);
 }
 
-function showCustomError(errorForm, message, validationConfig) {
-  if (errorForm) {
+function showCustomError(form, input, validationConfig) {
+    const errorText = input.validationMessage;
+    const errorForm = form.querySelector(
+      `.${validationConfig.inputErrorClass}-${input.name}`
+    );
+    input.classList.add(validationConfig.inputErrorClass);
     errorForm.classList.add(validationConfig.errorClass);
-    errorForm.textContent = message;
-  }
+    errorForm.textContent = errorText;
 }
 
-function clearCustomError(errorForm, validationConfig) {
-  errorForm.classList.remove(validationConfig.errorClass);
+function clearCustomError(form, input, validationConfig) {
+  const errorForm = form.querySelector(
+    `.${validationConfig.inputErrorClass}-${input.name}`
+  );
+  input.classList.remove(validationConfig.inputErrorClass);
+  errorForm.classList.remove(validationConfig.inputErrorClass);
   errorForm.textContent = "";
 }
 
 export function clearValidation(form, validationConfig) {
-  const errorsForm = form.querySelectorAll(validationConfig.inputErrorClass);
-  Array.from(errorsForm).forEach(clearCustomError);
+  const inputs = form.querySelectorAll(validationConfig.inputSelector);
+  Array.from(inputs).forEach((input) => {
+    clearValidation(form, input, validationConfig);
+  });
   const button = form.querySelector(".button");
   button.disabled = true;
   button.classList.toggle(validationConfig.inactiveButtonClass, true);
