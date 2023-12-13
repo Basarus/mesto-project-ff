@@ -35,8 +35,6 @@ export function closePopupOnEsc(event) {
 export function openPopup(popup) {
   popup.classList.add("popup_is-opened");
   popup.classList.remove("popup_is-animated");
-  const button = popup.querySelector('.button')
-  if (button) button.textContent = "Сохранить"
   toggleEscEventHandler("add");
 }
 
@@ -48,7 +46,8 @@ export async function closePopup(popup) {
 
 export function handleAvatarFormSubmit(event) {
   event.preventDefault();
-  event.target.querySelector(".popup__button").textContent = "Сохранение...";
+  const button = event.target.querySelector(".popup__button")
+  button.textContent = "Сохранение...";
   const imageUrl = event.target["link"].value;
   mesto.updateUserAvatar(imageUrl).then((res) => {
     if (!res) return;
@@ -56,12 +55,14 @@ export function handleAvatarFormSubmit(event) {
   }).catch((err) => {
     console.log(err)
   });
+  button.textContent = "Сохранить"
   closePopup(updateAvatarPopup);
 }
 
 export function handleProfileFormSubmit(event) {
   event.preventDefault();
-  event.target.querySelector(".popup__button").textContent = "Сохранение...";
+  const button = event.target.querySelector(".popup__button")
+  button.textContent = "Сохранение...";
   mesto
     .updateUser(event.target.name.value, event.target.description.value)
     .then((res) => {
@@ -71,12 +72,14 @@ export function handleProfileFormSubmit(event) {
     }).catch((err) => {
       console.log(err)
     });
+  button.textContent = "Сохранить"
   closePopup(editPopup);
 }
 
 export function handleCardFormSubmit(event, handleImageClick) {
   event.preventDefault();
-  event.target.querySelector(".popup__button").textContent = "Сохранение...";
+  const button = event.target.querySelector(".popup__button")
+  button.textContent = "Сохранение...";
   const cardName = event.target["place-name"].value;
   const imageUrl = event.target["link"].value;
 
@@ -93,6 +96,7 @@ export function handleCardFormSubmit(event, handleImageClick) {
   }).catch((err) => {
     console.log(err)
   });
+  button.textContent = "Сохранить"
   closePopup(addPopup);
 }
 
