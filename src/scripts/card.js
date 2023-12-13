@@ -47,21 +47,6 @@ export function updateCard(cardData) {
     cardData.likes.length;
 }
 
-export function handleLike(event) {
-  mesto
-    .setLikeCard(
-      event.target.closest(".places__item").id,
-      !event.target.classList.contains("card__like-button_is-active")
-    )
-    .then((res) => {
-      event.target.classList.toggle("card__like-button_is-active");
-      updateCard(res);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-}
-
 export function deleteCard(element) {
   mesto
     .deleteCard(element.id)
@@ -73,7 +58,7 @@ export function deleteCard(element) {
     });
 }
 
-export function renderCard(cardData, handleImageClick) {
+export function renderCard({ cardData, handleImageClick, handleLike }) {
   const cardElement = createCard({
     cardData,
     deleteCallback: deleteCard,
@@ -90,12 +75,12 @@ export function setDefaultEventHandlers({
   imageClickCallback,
   likeCallback,
 }) {
-  const deleteCardButton = cardElement.querySelector(".card__delete-button");
-  if (deleteCallback)
+  if (deleteCallback) {
+    const deleteCardButton = cardElement.querySelector(".card__delete-button");
     deleteCardButton.addEventListener("click", () => {
       deleteCallback(cardElement);
     });
-
+  }
   const likeButton = cardElement.querySelector(".card__like-button");
   likeButton.addEventListener("click", likeCallback);
 

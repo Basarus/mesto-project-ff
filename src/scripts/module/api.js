@@ -13,11 +13,10 @@ async function request(address, type = "POST", body = null) {
       "Content-Type": "application/json",
     },
     body: body ? JSON.stringify(body) : null,
-  })
-    .then((res) => {
-      if (res.ok) return res.json();
-      else throw `Ошибка ${res.status}`;
-    })
+  }).then((res) => {
+    if (res.ok) return res.json();
+    else throw `Ошибка ${res.status}`;
+  });
 
   return result ?? null;
 }

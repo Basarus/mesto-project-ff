@@ -19,13 +19,6 @@ function bindValidation(form, validationConfig) {
   const button = form.querySelector(validationConfig.submitButtonSelector);
 
   inputs.forEach((input) => {
-    const customValidationNames = ["name", "description", "place-name"];
-    if (customValidationNames.indexOf(input.name) !== -1)
-      input.setAttribute(
-        "data-error",
-        "Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
-      );
-
     input.addEventListener("input", () => {
       checkInputValidity(form, input, validationConfig);
       toggleButtonState(inputs, button, validationConfig);
@@ -45,13 +38,13 @@ function checkInputValidity(form, input, validationConfig) {
 }
 
 function showCustomError(form, input, validationConfig) {
-    const errorText = input.validationMessage;
-    const errorForm = form.querySelector(
-      `.${validationConfig.inputErrorClass}-${input.name}`
-    );
-    input.classList.add(validationConfig.inputErrorClass);
-    errorForm.classList.add(validationConfig.errorClass);
-    errorForm.textContent = errorText;
+  const errorText = input.validationMessage;
+  const errorForm = form.querySelector(
+    `.${validationConfig.inputErrorClass}-${input.name}`
+  );
+  input.classList.add(validationConfig.inputErrorClass);
+  errorForm.classList.add(validationConfig.errorClass);
+  errorForm.textContent = errorText;
 }
 
 function clearCustomError(form, input, validationConfig) {
