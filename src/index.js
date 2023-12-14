@@ -36,22 +36,22 @@ editButton.addEventListener("click", () => {
   editForm.name.value = profileTitle.textContent;
   editForm.description.value = profileDescription.textContent;
   clearValidation(editForm, validationConfig);
-  openPopup(editPopup, toggleEscEventHandler);
+  openPopup(editPopup);
 });
 
 addButton.addEventListener("click", () => {
   clearValidation(addCardForm, validationConfig);
-  openPopup(addPopup, toggleEscEventHandler);
+  openPopup(addPopup);
 });
 profileImage.addEventListener("click", () => {
   clearValidation(updateAvatarPopup, validationConfig);
-  openPopup(updateAvatarPopup, toggleEscEventHandler);
+  openPopup(updateAvatarPopup);
 });
 
 closeButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const popup = button.closest(".popup");
-    closePopup(popup, toggleEscEventHandler);
+    closePopup(popup);
   });
 });
 
@@ -81,7 +81,7 @@ function handleAvatarFormSubmit(event) {
     })
     .finally(() => {
       button.textContent = "Сохранить";
-      closePopup(updateAvatarPopup, toggleEscEventHandler);
+      closePopup(updateAvatarPopup);
     });
 }
 
@@ -101,7 +101,7 @@ function handleProfileFormSubmit(event) {
     })
     .finally(() => {
       button.textContent = "Сохранить";
-      closePopup(editPopup, toggleEscEventHandler);
+      closePopup(editPopup);
     });
 }
 
@@ -130,7 +130,7 @@ function handleCardFormSubmit(event, handleImageClick) {
     })
     .finally(() => {
       button.textContent = "Сохранить";
-      closePopup(addPopup, toggleEscEventHandler);
+      closePopup(addPopup);
     });
 }
 
@@ -147,29 +147,6 @@ function handleLike(event) {
     .catch((err) => {
       console.error(err);
     });
-}
-
-function toggleEscEventHandler(action) {
-  if (action === "add") {
-    document.addEventListener("keydown", closePopupOnEsc);
-    document.addEventListener("mousedown", closePopupOnOverlayClick);
-  } else if (action === "remove") {
-    document.removeEventListener("keydown", closePopupOnEsc);
-    document.removeEventListener("mousedown", closePopupOnOverlayClick);
-  }
-}
-
-function closePopupOnOverlayClick(event) {
-  if (event.target.classList.contains("popup_is-opened"))
-    closePopup(event.target, toggleEscEventHandler);
-}
-
-function closePopupOnEsc(event) {
-  if (event.key === "Escape")
-    closePopup(
-      document.querySelector(".popup_is-opened"),
-      toggleEscEventHandler
-    );
 }
 
 editForm.addEventListener("submit", handleProfileFormSubmit);
